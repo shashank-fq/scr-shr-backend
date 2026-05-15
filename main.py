@@ -124,22 +124,22 @@ async def websocket_endpoint(
         async for raw_message in websocket.iter_text():
 
         # Ignore websocket keepalive pings
-        try:
-            data = json.loads(raw_message)
+            try:
+                data = json.loads(raw_message)
 
-            if data.get("type") == "ping":
-                continue
+                if data.get("type") == "ping":
+                    continue
 
-        except Exception:
-            pass
+            except Exception:
+                pass
 
-        # Relay to every OTHER peer in the session
-        for peer in list(session["sockets"]):
-            if peer is not websocket:
-                try:
-                    await peer.send_text(raw_message)
-                except Exception:
-                    pass
+            # Relay to every OTHER peer in the session
+            for peer in list(session["sockets"]):
+                if peer is not websocket:
+                    try:
+                        await peer.send_text(raw_message)
+                    except Exception:
+                        pass
 
     except WebSocketDisconnect:
         pass
